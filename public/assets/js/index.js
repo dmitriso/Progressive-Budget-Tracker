@@ -6,7 +6,7 @@ fetch("/api/transaction")
     return response.json();
   })
   .then(data => {
-    // save db data on global variable
+    // SAVE DB DATA ON GLOBAL VARIABLE
     transactions = data;
 
     populateTotal();
@@ -15,7 +15,7 @@ fetch("/api/transaction")
   });
 
 function populateTotal() {
-  // reduce transaction amounts to a single total value
+  // REDUCE TRANSACTION AMOUNTS TO A SINGLE TOTAL VALUE
   let total = transactions.reduce((total, t) => {
     return total + parseInt(t.value);
   }, 0);
@@ -29,7 +29,7 @@ function populateTable() {
   tbody.innerHTML = "";
 
   transactions.forEach(transaction => {
-    // create and populate a table row
+    // CREATE AND POPULATE A TABLE ROW
     let tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${transaction.name}</td>
@@ -41,23 +41,23 @@ function populateTable() {
 }
 
 function populateChart() {
-  // copy array and reverse it
+  // COPT ARRAY AND REVESR IT
   let reversed = transactions.slice().reverse();
   let sum = 0;
 
-  // create date labels for chart
+  // CREATE DATE LABELS FOR CHART
   let labels = reversed.map(t => {
     let date = new Date(t.date);
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   });
 
-  // create incremental values for chart
+  // CREATE INCREMENTAL VALUES FOR CHART
   let data = reversed.map(t => {
     sum += parseInt(t.value);
     return sum;
   });
 
-  // remove old chart if it exists
+  // REMOVE OLD CHART IF IT EXISTS
   if (myChart) {
     myChart.destroy();
   }
@@ -83,7 +83,7 @@ function sendTransaction(isAdding) {
   let amountEl = document.querySelector("#t-amount");
   let errorEl = document.querySelector(".form .error");
 
-  // validate form
+  // VALIDATE FORM
   if (nameEl.value === "" || amountEl.value === "") {
     errorEl.textContent = "Missing Information";
     return;
@@ -92,27 +92,29 @@ function sendTransaction(isAdding) {
     errorEl.textContent = "";
   }
 
-  // create record
+  // CREATE RECORD
   let transaction = {
     name: nameEl.value,
     value: amountEl.value,
     date: new Date().toISOString()
   };
 
-  // if subtracting funds, convert amount to negative number
+  // IF SUBTRACTING FUNDS, CONVERT AMOUNT TO NEGATIVE NUMBER 
   if (!isAdding) {
     transaction.value *= -1;
   }
 
-  // add to beginning of current array of data
+  // ADD TO BEGINNING OF CURRENT ARRAY OF DATA
   transactions.unshift(transaction);
 
-  // re-run logic to populate ui with new record
+
+  // RE-RUN LOGIC TO POPULATE UI WITH NEW RECORD
   populateChart();
   populateTable();
   populateTotal();
   
-  // also send to server
+
+  // ALSO SEND TO SERVER
   fetch("/api/transaction", {
     method: "POST",
     body: JSON.stringify(transaction),
@@ -129,16 +131,16 @@ function sendTransaction(isAdding) {
       errorEl.textContent = "Missing Information";
     }
     else {
-      // clear form
+      // CLEAR FORM
       nameEl.value = "";
       amountEl.value = "";
     }
   })
   .catch(err => {
-    // fetch failed, so save in indexed db
+    // FETCH FAILED, SO SAVE IN INDEXED DB
     saveRecord(transaction);
 
-    // clear form
+    // CLEAR FORM
     nameEl.value = "";
     amountEl.value = "";
   });

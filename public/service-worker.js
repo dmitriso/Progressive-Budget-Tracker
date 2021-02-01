@@ -2,12 +2,11 @@ const FILES_TO_CACHE = [
     "/",
     "/index.html",
     "/manifest.json",
-    "/assets/js/db.js",
     "/assets/css/styles.css",
+    "/assets/js/db.js",
     "/assets/js/index.js",
     "/assets/icons/icon-192x192.png",
     "/assets/icons/icon-512x512.png",
-    
 ];
 
 const CACHE_NAME = "static-cache-v2";
@@ -21,7 +20,6 @@ self.addEventListener("install", function (evt) {
             return cache.addAll(FILES_TO_CACHE);
         })
     );
-
     self.skipWaiting();
 });
 
@@ -38,7 +36,6 @@ self.addEventListener("activate", function (evt) {
             );
         })
     );
-
     self.clients.claim();
 });
 
@@ -54,7 +51,6 @@ self.addEventListener("fetch", function (evt) {
                         if (response.status === 200) {
                             cache.put(evt.request.url, response.clone());
                         }
-
                         return response;
                     })
                     .catch(err => {
@@ -63,7 +59,6 @@ self.addEventListener("fetch", function (evt) {
                     });
             }).catch(err => console.log(err))
         );
-
         return;
     }
 
